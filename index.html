@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>כניסה – TABLAO REMANGAR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #1a1a1a; direction: rtl; }
+.header { background: #1a0a0a; color: white; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.header-icon { width: 38px; height: 38px; border-radius: 50%; background: #c41e1e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.header h1 { font-size: 16px; font-weight: 600; margin: 0; }
+.header p { font-size: 12px; color: #aaa; margin: 0; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
+.stat { background: white; border-radius: 10px; padding: 14px; text-align: center; }
+.stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.stat-val { font-size: 26px; font-weight: 600; }
+.stat-val.green { color: #2e7d32; }
+.content { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.card { background: white; border-radius: 12px; padding: 16px; }
+.card-title { font-size: 13px; font-weight: 600; color: #666; margin-bottom: 12px; }
+.scan-btn { width: 100%; padding: 15px; background: #c41e1e; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; margin-bottom: 12px; }
+.scan-btn:active { opacity: 0.85; }
+#reader { border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+.divider { text-align: center; font-size: 12px; color: #aaa; margin-bottom: 12px; position: relative; }
+.divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 0.5px; background: #ddd; }
+.divider::before { right: 0; }
+.divider::after { left: 0; }
+.manual-row { display: flex; gap: 8px; }
+.manual-row input { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
+.manual-row button { padding: 10px 16px; background: #1a0a0a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.result { border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 4px; }
+.result-ok { background: #e8f5e9; border: 1px solid #4caf50; }
+.result-err { background: #ffebee; border: 1px solid #ef5350; }
+.result-warn { background: #fff8e1; border: 1px solid #ffa000; }
+.result i { font-size: 40px; display: block; margin-bottom: 10px; }
+.result-ok i { color: #2e7d32; }
+.result-err i { color: #c62828; }
+.result-warn i { color: #e65100; }
+.result h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.result-ok h2 { color: #1b5e20; }
+.result-err h2 { color: #b71c1c; }
+.result-warn h2 { color: #bf360c; }
+.result p { font-size: 13px; }
+.result-ok p { color: #2e7d32; }
+.result-err p { color: #c62828; }
+.result-warn p { color: #e65100; }
+.search-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.search-row input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; width: 140px; font-family: inherit; }
+.guest-list { max-height: 320px; overflow-y: auto; }
+.guest-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid #eee; }
+.guest-row:last-child { border-bottom: none; }
+.guest-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.guest-sub { font-size: 11px; color: #888; }
+.badge { font-size: 11px; border-radius: 12px; padding: 3px 10px; white-space: nowrap; font-weight: 500; }
+.badge-ok { background: #e8f5e9; color: #1b5e20; }
+.badge-wait { background: #f5f5f5; color: #888; border: 1px solid #ddd; }
+.badge-some { background: #fff8e1; color: #e65100; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon"><i class="ti ti-door-enter" style="color:white; font-size:20px;"></i></div>
+  <div>
+    <h1>TABLAO REMANGAR</h1>
+    <p>כניסה | 28.5.2026 · 20:30</p>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-label">הגיעו</div>
+    <div class="stat-val green" id="cnt-arrived">0</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">טרם הגיעו</div>
+    <div class="stat-val" id="cnt-pending">29</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <div id="result-box"></div>
+
+  <div class="card">
+    <div class="card-title">סריקת כרטיס</div>
+    <button class="scan-btn" id="scan-btn" onclick="toggleScanner()">
+      <i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה
+    </button>
+    <div id="reader"></div>
+    <div class="divider">או הזיני ידנית</div>
+    <div class="manual-row">
+      <input type="text" id="manual-code" placeholder="לדוגמה: 10499-01" onkeydown="if(event.key==='Enter') checkManual()" />
+      <button onclick="checkManual()">בדקי</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="search-row">
+      <div class="card-title" style="margin:0;">רשימת אורחים</div>
+      <input type="text" id="search" placeholder="חפשי שם..." oninput="renderList()" />
+    </div>
+    <div class="guest-list" id="guest-list"></div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+const GUESTS = [
+  {name:"נוגה מור-חביליו", tickets:["10499-01"]},
+  {name:"שמעיה בסל", tickets:["10494-01"]},
+  {name:"דנה וסרמן", tickets:["10493-01"]},
+  {name:"דמיטרי מיליטיצקי", tickets:["10492-01"]},
+  {name:"אריק שיבי", tickets:["10491-01","10491-02"]},
+  {name:"אילה קול", tickets:["10483-01","10483-02"]},
+  {name:"דליה קרישטל ברנובר", tickets:["10482-01","10482-02","10482-03","10482-04"]},
+  {name:"עמוס פליישמן פלז", tickets:["10460-01"]},
+  {name:"תמר קרמר", tickets:["10435-01","10435-02"]},
+  {name:"אופק אזרד", tickets:["10434-01"]},
+  {name:"גאיה גולדשטיין", tickets:["10433-01"]},
+  {name:"רותם מרסיק מזרחי", tickets:["10414-01","10414-02"]},
+  {name:"דור יפרח", tickets:["10412-01","10412-02"]},
+  {name:"אפרת מרסיק", tickets:["10395-01","10395-02","10395-03","10395-04"]},
+  {name:"רחלי שטיינר", tickets:["10394-01","10394-02"]},
+  {name:"אסתר גולדברג", tickets:["10371-01"]},
+  {name:"נסיה שחף", tickets:["10370-01"]},
+];
+
+const ticketMap = {};
+GUESTS.forEach(g => g.tickets.forEach(t => ticketMap[t] = g));
+
+const scanned = {};
+let scannerOpen = false;
+let html5Scanner = null;
+
+function totalTickets() { return GUESTS.reduce((s,g) => s+g.tickets.length, 0); }
+function arrivedCount() { return Object.keys(scanned).length; }
+
+function updateStats() {
+  document.getElementById('cnt-arrived').textContent = arrivedCount();
+  document.getElementById('cnt-pending').textContent = totalTickets() - arrivedCount();
+}
+
+function showResult(type, title, sub) {
+  const cls = {ok:'result-ok', err:'result-err', warn:'result-warn'};
+  const ico = {ok:'ti-circle-check', err:'ti-circle-x', warn:'ti-alert-triangle'};
+  document.getElementById('result-box').innerHTML =
+    `<div class="result ${cls[type]}">
+      <i class="ti ${ico[type]}"></i>
+      <h2>${title}</h2>
+      <p>${sub}</p>
+    </div>`;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function checkCode(raw) {
+  let code = raw.trim();
+  const parts = code.split('|');
+  let ticketId = parts.length >= 2 ? parts[1] : code;
+  ticketId = ticketId.trim();
+
+  const key = Object.keys(ticketMap).find(k => k.toLowerCase() === ticketId.toLowerCase());
+  if (!key) { showResult('err','כרטיס לא נמצא','הקוד לא מופיע ברשימה. נסי שוב.'); return; }
+
+  const guest = ticketMap[key];
+  if (scanned[key]) {
+    showResult('warn','כרטיס כבר נסרק!', `${guest.name} – נסרק בשעה ${scanned[key]}`);
+  } else {
+    const now = new Date().toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+    scanned[key] = now;
+    const arrived = guest.tickets.filter(t => scanned[t]).length;
+    const sub = guest.tickets.length > 1
+      ? `${arrived} מתוך ${guest.tickets.length} כרטיסים נסרקו · ${now}`
+      : `כרטיס ${key} · ${now}`;
+    showResult('ok', `ברוכ/ה הבא/ה, ${guest.name}!`, sub);
+    updateStats();
+    renderList();
+  }
+}
+
+function checkManual() {
+  const val = document.getElementById('manual-code').value;
+  if (!val.trim()) return;
+  checkCode(val);
+  document.getElementById('manual-code').value = '';
+}
+
+function toggleScanner() {
+  if (scannerOpen) {
+    html5Scanner && html5Scanner.stop().catch(()=>{});
+    document.getElementById('reader').style.display = 'none';
+    document.getElementById('scan-btn').innerHTML = '<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
+    scannerOpen = false;
+  } else {
+    document.getElementById('reader').style.display = 'block';
+    document.getElementById('scan-btn').innerHTML = '<i class="ti ti-x"></i> סגרי מצלמה';
+    scannerOpen = true;
+    html5Scanner = new Html5Qrcode("reader");
+    html5Scanner.start(
+      {facingMode:"environment"},
+      {fps:10, qrbox:{width:230, height:230}},
+      decoded => {
+        checkCode(decoded);
+        html5Scanner.pause();
+        setTimeout(() => { try { html5Scanner.resume(); } catch(e){} }, 2500);
+      },
+      () => {}
+    ).catch(() => {
+      showResult('err','אין גישה למצלמה','אשרי הרשאת מצלמה בדפדפן, או השתמשי בהזנה ידנית.');
+      document.getElementById('reader').style.display = 'none';
+      document.getElementById('scan-btn').innerHTML = '<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
+      scannerOpen = false;
+    });
+  }
+}
+
+function renderList() {
+  const q = (document.getElementById('search').value || '').trim();
+  const filtered = q ? GUESTS.filter(g => g.name.includes(q)) : GUESTS;
+  document.getElementById('guest-list').innerHTML = filtered.map(g => {
+    const a = g.tickets.filter(t => scanned[t]).length;
+    const all = a === g.tickets.length;
+    const some = a > 0 && !all;
+    const badgeClass = all ? 'badge-ok' : some ? 'badge-some' : 'badge-wait';
+    const badgeText = all ? 'הגיע/ה' : some ? `${a}/${g.tickets.length}` : 'ממתין/ה';
+    const icon = all ? 'ti-circle-check' : some ? 'ti-circle-half' : 'ti-circle';
+    const iconColor = all ? '#2e7d32' : some ? '#e65100' : '#ccc';
+    return `<div class="guest-row">
+      <i class="ti ${icon}" style="color:${iconColor}; font-size:20px; flex-shrink:0;"></i>
+      <div style="flex:1; min-width:0;">
+        <div class="guest-name">${g.name}</div>
+        <div class="guest-sub">${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}</div>
+      </div>
+      <span class="badge ${badgeClass}">${badgeText}</span>
+    </div>`;
+  }).join('');
+}
+
+renderList();
+</script>
+</body>
+</html>
