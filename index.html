@@ -56,6 +56,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .badge-ok { background: #e8f5e9; color: #1b5e20; }
 .badge-wait { background: #f5f5f5; color: #888; border: 1px solid #ddd; }
 .badge-some { background: #fff8e1; color: #e65100; }
+.approve-btn { background: none; border: 1.5px solid #ddd; border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: #888; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+.approve-btn:active { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
 .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-left: 6px; }
 .sync-dot.ok { background: #4caf50; }
 .sync-dot.err { background: #ef5350; }
@@ -283,6 +285,24 @@ function toggleScanner() {
   }
 }
 
+async function approveGuest(name) {
+  const guest = GUESTS.find(g => g.name === name);
+  if (!guest) return;
+  const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const unscanned = guest.tickets.filter(t => !scanned[t]);
+  if (unscanned.length === 0) return;
+  for (const t of unscanned) {
+    scanned[t] = now;
+    await saveToFirebase(t, now);
+  }
+  lastScanned = {key: unscanned[unscanned.length-1], guest};
+  const sub = guest.tickets.length > 1
+    ? `כל ${guest.tickets.length} הכרטיסים אושרו · ${now}`
+    : `כרטיס ${guest.tickets[0]} · ${now}`;
+  showResult('ok', `ברוכ/ה הבא/ה, ${guest.name}!`, sub, true);
+  updateStats(); renderList();
+}
+
 function renderList() {
   const q = (document.getElementById('search').value||'').trim();
   const filtered = q ? GUESTS.filter(g=>g.name.includes(q)) : GUESTS;
@@ -293,6 +313,9 @@ function renderList() {
     const bt = all?'הגיע/ה':some?`${a}/${g.tickets.length}`:'ממתין/ה';
     const ic = all?'ti-circle-check':some?'ti-circle-half':'ti-circle';
     const col = all?'#2e7d32':some?'#e65100':'#ccc';
+    const approveBtn = !all
+      ? `<button class="approve-btn" onclick="approveGuest('${g.name.replace(/'/g, "\'")}')">✓ אשרי</button>`
+      : '';
     return `<div class="guest-row">
       <i class="ti ${ic}" style="color:${col};font-size:20px;flex-shrink:0;"></i>
       <div style="flex:1;min-width:0;">
@@ -300,6 +323,7 @@ function renderList() {
         <div class="guest-sub">${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}</div>
       </div>
       <span class="badge ${bc}">${bt}</span>
+      ${approveBtn}
     </div>`;
   }).join('');
 }
