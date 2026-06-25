@@ -13,6 +13,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .header-icon { width: 38px; height: 38px; border-radius: 50%; background: #c41e1e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .header h1 { font-size: 16px; font-weight: 600; margin: 0; }
 .header p { font-size: 12px; color: #aaa; margin: 0; }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-left: 6px; }
+.sync-dot.ok { background: #4caf50; }
+.sync-dot.err { background: #ef5350; }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
 .stat { background: white; border-radius: 10px; padding: 14px; text-align: center; }
 .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
@@ -32,7 +35,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .result-ok { background: #e8f5e9; border: 1px solid #4caf50; }
 .result-err { background: #ffebee; border: 1px solid #ef5350; }
 .result-warn { background: #fff8e1; border: 1px solid #ffa000; }
-.result i { font-size: 40px; display: block; margin-bottom: 10px; }
+.result i.icon { font-size: 40px; display: block; margin-bottom: 10px; }
 .result-ok i.icon { color: #2e7d32; }
 .result-err i.icon { color: #c62828; }
 .result-warn i.icon { color: #e65100; }
@@ -45,22 +48,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .result-err p { color: #c62828; }
 .result-warn p { color: #e65100; }
 .undo-btn { margin-top: 12px; padding: 8px 18px; background: white; color: #c62828; border: 1.5px solid #c62828; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+.tabs { display: flex; gap: 0; margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; }
+.tab { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; border: none; font-family: inherit; color: #888; }
+.tab.active { background: #1a0a0a; color: white; }
+
 .search-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .search-row input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; width: 140px; font-family: inherit; }
-.guest-list { max-height: 320px; overflow-y: auto; }
-.guest-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid #eee; }
+
+.guest-list { max-height: 380px; overflow-y: auto; }
+.guest-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 0.5px solid #eee; }
 .guest-row:last-child { border-bottom: none; }
+.guest-row.arrived { background: #f6fff6; border-radius: 8px; padding: 10px 8px; margin: 0 -8px; }
 .guest-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.guest-name.arrived { color: #1b5e20; }
 .guest-sub { font-size: 11px; color: #888; }
-.badge { font-size: 11px; border-radius: 12px; padding: 3px 10px; white-space: nowrap; font-weight: 500; }
-.badge-ok { background: #e8f5e9; color: #1b5e20; }
-.badge-wait { background: #f5f5f5; color: #888; border: 1px solid #ddd; }
-.badge-some { background: #fff8e1; color: #e65100; }
-.approve-btn { background: none; border: 1.5px solid #ddd; border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: #888; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
-.approve-btn:active { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
-.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-left: 6px; }
-.sync-dot.ok { background: #4caf50; }
-.sync-dot.err { background: #ef5350; }
+.guest-sub.arrived { color: #2e7d32; }
+
+.ticket-checks { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.ticket-check { width: 22px; height: 22px; border-radius: 5px; border: 1.5px solid #ddd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #ccc; flex-shrink: 0; }
+.ticket-check.checked { background: #2e7d32; border-color: #2e7d32; color: white; }
+
+.approve-all-btn { background: none; border: 1.5px solid #ddd; border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; color: #888; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+.approve-all-btn.done { border-color: #4caf50; color: #2e7d32; background: #e8f5e9; }
 </style>
 </head>
 <body>
@@ -69,13 +79,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
   <div class="header-icon"><i class="ti ti-door-enter" style="color:white; font-size:20px;"></i></div>
   <div style="flex:1;">
     <h1>TABLAO REMANGAR</h1>
-    <p>כניסה | 28.5.2026 · 20:30 <span class="sync-dot" id="sync-dot"></span></p>
+    <p>כניסה | 25.6.2026 · 20:30 <span class="sync-dot" id="sync-dot"></span></p>
   </div>
 </div>
 
 <div class="stats">
   <div class="stat"><div class="stat-label">הגיעו</div><div class="stat-val green" id="cnt-arrived">0</div></div>
-  <div class="stat"><div class="stat-label">טרם הגיעו</div><div class="stat-val" id="cnt-pending">34</div></div>
+  <div class="stat"><div class="stat-label">טרם הגיעו</div><div class="stat-val" id="cnt-pending">43</div></div>
 </div>
 
 <div class="content">
@@ -89,7 +99,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
     <div id="reader"></div>
     <div class="divider">או הזיני ידנית</div>
     <div class="manual-row">
-      <input type="text" id="manual-code" placeholder="לדוגמה: 0005-01" onkeydown="if(event.key==='Enter') checkManual()" />
+      <input type="text" id="manual-code" placeholder="לדוגמה: 0006-01" onkeydown="if(event.key==='Enter') checkManual()" />
       <button onclick="checkManual()">בדקי</button>
     </div>
   </div>
@@ -99,6 +109,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
       <div class="card-title" style="margin:0;">רשימת אורחים</div>
       <input type="text" id="search" placeholder="חפשי שם..." oninput="renderList()" />
     </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tab-all" onclick="setTab('all')">כולם</button>
+      <button class="tab" id="tab-arrived" onclick="setTab('arrived')">הגיעו</button>
+      <button class="tab" id="tab-pending" onclick="setTab('pending')">ממתינים</button>
+    </div>
+
     <div class="guest-list" id="guest-list"></div>
   </div>
 </div>
@@ -108,92 +125,96 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 const FIREBASE_URL = "https://tablao-remangar-default-rtdb.firebaseio.com";
 
 const GUESTS = [
-  {name:"Meirav Shimony", tickets:["0001-01"]},
-  {name:"דורון ספקטור", tickets:["0002-01","0002-02"]},
-  {name:"ליאל חדאד", tickets:["0003-01"]},
-  {name:"tali zommer", tickets:["0004-01","0004-02"]},
-  {name:"נוגה מור-חביליו", tickets:["0005-01"]},
-  {name:"שמעיה בסל", tickets:["0006-01"]},
-  {name:"דנה וסרמן", tickets:["0007-01"]},
-  {name:"דמיטרי מיליטיצקי", tickets:["0008-01"]},
-  {name:"אריק שיבי", tickets:["0009-01","0009-02"]},
-  {name:"אילה קול", tickets:["0010-01","0010-02"]},
-  {name:"דליה קרישטל ברנובר", tickets:["0011-01","0011-02","0011-03","0011-04"]},
-  {name:"עמוס פליישמן פלז", tickets:["0012-01"]},
-  {name:"תמר קרמר", tickets:["0013-01","0013-02"]},
-  {name:"אופק אזרד", tickets:["0014-01"]},
-  {name:"גאיה גולדשטיין", tickets:["0015-01"]},
-  {name:"רותם מרסיק מזרחי", tickets:["0016-01","0016-02"]},
-  {name:"דור יפרח", tickets:["0017-01","0017-02"]},
-  {name:"אפרת מרסיק", tickets:["0018-01","0018-02","0018-03","0018-04","0018-05"]},
-  {name:"אסתר גולדברג", tickets:["0019-01"]},
-  {name:"נסיה שחף", tickets:["0020-01"]},
+  {name:"Dmitri Milititski", tickets:["0001-01","0001-02"]},
+  {name:"יוליה בנסמן", tickets:["0002-01","0002-02"]},
+  {name:"ביניסטי בריג'יט", tickets:["0003-01","0003-02"]},
+  {name:"ANTEA MORENO", tickets:["0004-01","0004-02"]},
+  {name:"אורית מילר", tickets:["0005-01","0005-02"]},
+  {name:"נוגה מור-חביליו", tickets:["0006-01"]},
+  {name:"דרלי ספיר", tickets:["0007-01","0007-02"]},
+  {name:"טימור פירוג", tickets:["0008-01","0008-02"]},
+  {name:"מירב קורוסטישבסקי", tickets:["0009-01","0009-02"]},
+  {name:"גבי עדי", tickets:["0010-01"]},
+  {name:"גלית לחמן", tickets:["0011-01","0011-02","0011-03","0011-04","0011-05"]},
+  {name:"צפנת לובצקי", tickets:["0012-01","0012-02"]},
+  {name:"רותם שמעוני", tickets:["0013-01"]},
+  {name:"לי שוסטרמן שלו", tickets:["0014-01","0014-02"]},
+  {name:"אנדרי ליטבינסקי", tickets:["0015-01"]},
+  {name:"עמית לובטון", tickets:["0016-01","0016-02","0016-03"]},
+  {name:"מיה סגל", tickets:["0017-01","0017-02","0017-03","0017-04","0017-05","0017-06"]},
+  {name:"שיר ישראלי", tickets:["0018-01","0018-02"]},
+  {name:"אתי הלפרט", tickets:["0019-01"]},
+  {name:"תהילה שוורץ", tickets:["0020-01","0020-02"]},
 ];
 
 const ticketMap = {};
 GUESTS.forEach(g => g.tickets.forEach(t => ticketMap[t] = g));
 
-// scanned is synced with Firebase
 const scanned = {};
 let lastScanned = null;
 let scannerOpen = false;
 let html5Scanner = null;
+let currentTab = 'all';
 
 function setSyncDot(status) {
   const dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot ' + (status === 'ok' ? 'ok' : status === 'err' ? 'err' : '');
+  dot.className = 'sync-dot ' + (status==='ok'?'ok':status==='err'?'err':'');
 }
 
-// Listen to Firebase for real-time updates
+function fromFirebaseKey(k) {
+  const m = k.match(/^(\d{4})_(\d{2})$/);
+  return m ? `${m[1]}-${m[2]}` : k.replace('_','-');
+}
+
 function startListening() {
   const evtSource = new EventSource(`${FIREBASE_URL}/scanned.json`);
   evtSource.addEventListener('put', e => {
-    const data = JSON.parse(e.data);
-    const val = data.data;
-    // Clear and repopulate scanned from Firebase
+    const parsed = JSON.parse(e.data);
+    const path = parsed.path;
+    const val = parsed.data;
     Object.keys(scanned).forEach(k => delete scanned[k]);
-    if (val) Object.assign(scanned, val);
-    updateStats();
-    renderList();
-    setSyncDot('ok');
+    if (path === '/' && val) {
+      Object.keys(val).forEach(k => { scanned[fromFirebaseKey(k)] = val[k]; });
+    } else if (path !== '/' ) {
+      const key = fromFirebaseKey(path.replace('/',''));
+      if (val !== null) scanned[key] = val;
+    }
+    updateStats(); renderList(); setSyncDot('ok');
   });
   evtSource.addEventListener('patch', e => {
-    const data = JSON.parse(e.data);
-    if (data.data) Object.assign(scanned, data.data);
-    // Remove nulls (deleted entries)
-    Object.keys(scanned).forEach(k => { if (scanned[k] === null) delete scanned[k]; });
-    updateStats();
-    renderList();
-    setSyncDot('ok');
+    const parsed = JSON.parse(e.data);
+    const val = parsed.data;
+    if (val) {
+      Object.keys(val).forEach(k => {
+        const key = fromFirebaseKey(k);
+        if (val[k] === null) delete scanned[key];
+        else scanned[key] = val[k];
+      });
+    }
+    updateStats(); renderList(); setSyncDot('ok');
   });
   evtSource.onerror = () => setSyncDot('err');
 }
 
 async function saveToFirebase(key, value) {
   try {
-    const safeKey = key.replace('-', '_');
-    const res = await fetch(`${FIREBASE_URL}/scanned/${safeKey}.json`, {
-      method: 'PUT',
-      body: JSON.stringify(value)
+    const safeKey = key.replace('-','_');
+    await fetch(`${FIREBASE_URL}/scanned/${safeKey}.json`, {
+      method:'PUT', body: JSON.stringify(value)
     });
-    if (!res.ok) throw new Error();
     setSyncDot('ok');
-  } catch(e) {
-    setSyncDot('err');
-  }
+  } catch(e) { setSyncDot('err'); }
 }
 
 async function deleteFromFirebase(key) {
   try {
-    const safeKey = key.replace('-', '_');
-    await fetch(`${FIREBASE_URL}/scanned/${safeKey}.json`, { method: 'DELETE' });
+    const safeKey = key.replace('-','_');
+    await fetch(`${FIREBASE_URL}/scanned/${safeKey}.json`, {method:'DELETE'});
     setSyncDot('ok');
-  } catch(e) {
-    setSyncDot('err');
-  }
+  } catch(e) { setSyncDot('err'); }
 }
 
-function totalTickets() { return GUESTS.reduce((s,g) => s+g.tickets.length, 0); }
+function totalTickets() { return GUESTS.reduce((s,g)=>s+g.tickets.length,0); }
 function arrivedCount() { return Object.keys(scanned).length; }
 
 function updateStats() {
@@ -201,18 +222,22 @@ function updateStats() {
   document.getElementById('cnt-pending').textContent = totalTickets() - arrivedCount();
 }
 
+function setTab(tab) {
+  currentTab = tab;
+  ['all','arrived','pending'].forEach(t => {
+    document.getElementById('tab-'+t).className = 'tab' + (t===tab?' active':'');
+  });
+  renderList();
+}
+
 function showResult(type, title, sub, showUndo=false) {
-  const cls = {ok:'result-ok', err:'result-err', warn:'result-warn'};
-  const ico = {ok:'ti-circle-check', err:'ti-circle-x', warn:'ti-alert-triangle'};
+  const cls = {ok:'result-ok',err:'result-err',warn:'result-warn'};
+  const ico = {ok:'ti-circle-check',err:'ti-circle-x',warn:'ti-alert-triangle'};
   const undoBtn = showUndo
     ? `<button class="undo-btn" onclick="undoLast()"><i class="ti ti-arrow-back-up"></i> בטלי סריקה</button>`
     : '';
   document.getElementById('result-box').innerHTML =
-    `<div class="result ${cls[type]}">
-      <i class="ti ${ico[type]} icon"></i>
-      <h2>${title}</h2><p>${sub}</p>
-      ${undoBtn}
-    </div>`;
+    `<div class="result ${cls[type]}"><i class="ti ${ico[type]} icon"></i><h2>${title}</h2><p>${sub}</p>${undoBtn}</div>`;
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -223,28 +248,28 @@ async function undoLast() {
   await deleteFromFirebase(key);
   lastScanned = null;
   updateStats(); renderList();
-  showResult('warn', 'הסריקה בוטלה', `${guest.name} – כרטיס ${key} חזר לממתין`);
+  showResult('warn','הסריקה בוטלה',`${guest.name} – כרטיס ${key} חזר לממתין`);
 }
 
 async function checkCode(raw) {
   const match = raw.trim().match(/(\d{4}-\d{2})/);
   if (!match) { showResult('err','כרטיס לא נמצא','הקוד לא תקין. נסי שוב.'); return; }
   const ticketId = match[1];
-  const key = Object.keys(ticketMap).find(k => k === ticketId);
+  const key = Object.keys(ticketMap).find(k=>k===ticketId);
   if (!key) { showResult('err','כרטיס לא נמצא','המספר לא מופיע ברשימה.'); return; }
   const guest = ticketMap[key];
   if (scanned[key]) {
-    showResult('warn','כרטיס כבר נסרק!', `${guest.name} – נסרק בשעה ${scanned[key]}`);
+    showResult('warn','כרטיס כבר נסרק!',`${guest.name} – נסרק בשעה ${scanned[key]}`);
   } else {
     const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
     scanned[key] = now;
     lastScanned = {key, guest};
     await saveToFirebase(key, now);
-    const arrived = guest.tickets.filter(t => scanned[t]).length;
-    const sub = guest.tickets.length > 1
+    const arrived = guest.tickets.filter(t=>scanned[t]).length;
+    const sub = guest.tickets.length>1
       ? `${arrived} מתוך ${guest.tickets.length} כרטיסים נסרקו · ${now}`
       : `כרטיס ${key} · ${now}`;
-    showResult('ok', `ברוכ/ה הבא/ה, ${guest.name}!`, sub, true);
+    showResult('ok',`ברוכ/ה הבא/ה, ${guest.name}!`,sub,true);
     updateStats(); renderList();
   }
 }
@@ -256,79 +281,129 @@ function checkManual() {
   document.getElementById('manual-code').value = '';
 }
 
-function toggleScanner() {
-  if (scannerOpen) {
-    html5Scanner && html5Scanner.stop().catch(()=>{});
-    document.getElementById('reader').style.display = 'none';
-    document.getElementById('scan-btn').innerHTML = '<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
-    scannerOpen = false;
-  } else {
-    document.getElementById('reader').style.display = 'block';
-    document.getElementById('scan-btn').innerHTML = '<i class="ti ti-x"></i> סגרי מצלמה';
-    scannerOpen = true;
-    html5Scanner = new Html5Qrcode("reader");
-    html5Scanner.start(
-      {facingMode:"environment"},
-      {fps:10, qrbox:{width:230, height:230}},
-      decoded => {
-        checkCode(decoded);
-        html5Scanner.pause();
-        setTimeout(()=>{ try{html5Scanner.resume();}catch(e){} }, 2500);
-      },
-      ()=>{}
-    ).catch(()=>{
-      showResult('err','אין גישה למצלמה','אשרי הרשאת מצלמה בדפדפן.');
-      document.getElementById('reader').style.display = 'none';
-      document.getElementById('scan-btn').innerHTML = '<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
-      scannerOpen = false;
-    });
-  }
-}
-
-async function approveGuest(name) {
-  const guest = GUESTS.find(g => g.name === name);
+async function toggleTicket(ticketId) {
+  const guest = ticketMap[ticketId];
   if (!guest) return;
   const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  const unscanned = guest.tickets.filter(t => !scanned[t]);
-  if (unscanned.length === 0) return;
+  if (scanned[ticketId]) {
+    delete scanned[ticketId];
+    await deleteFromFirebase(ticketId);
+  } else {
+    scanned[ticketId] = now;
+    lastScanned = {key: ticketId, guest};
+    await saveToFirebase(ticketId, now);
+  }
+  updateStats(); renderList();
+}
+
+async function approveAll(name) {
+  const guest = GUESTS.find(g=>g.name===name);
+  if (!guest) return;
+  const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  const unscanned = guest.tickets.filter(t=>!scanned[t]);
+  if (unscanned.length===0) return;
   for (const t of unscanned) {
     scanned[t] = now;
     await saveToFirebase(t, now);
   }
   lastScanned = {key: unscanned[unscanned.length-1], guest};
-  const sub = guest.tickets.length > 1
+  const sub = guest.tickets.length>1
     ? `כל ${guest.tickets.length} הכרטיסים אושרו · ${now}`
     : `כרטיס ${guest.tickets[0]} · ${now}`;
-  showResult('ok', `ברוכ/ה הבא/ה, ${guest.name}!`, sub, true);
+  showResult('ok',`ברוכ/ה הבא/ה, ${guest.name}!`,sub,true);
   updateStats(); renderList();
 }
 
 function renderList() {
   const q = (document.getElementById('search').value||'').trim();
-  const filtered = q ? GUESTS.filter(g=>g.name.includes(q)) : GUESTS;
+  let filtered = q ? GUESTS.filter(g=>g.name.includes(q)) : [...GUESTS];
+
+  if (currentTab==='arrived') {
+    filtered = filtered.filter(g=>g.tickets.some(t=>scanned[t]));
+  } else if (currentTab==='pending') {
+    filtered = filtered.filter(g=>g.tickets.every(t=>!scanned[t]));
+  }
+
+  if (currentTab==='all') {
+    filtered.sort((a,b)=>{
+      const aAll = a.tickets.every(t=>scanned[t]);
+      const bAll = b.tickets.every(t=>scanned[t]);
+      return bAll - aAll;
+    });
+  }
+
   document.getElementById('guest-list').innerHTML = filtered.map(g=>{
-    const a = g.tickets.filter(t=>scanned[t]).length;
-    const all = a===g.tickets.length, some = a>0&&!all;
-    const bc = all?'badge-ok':some?'badge-some':'badge-wait';
-    const bt = all?'הגיע/ה':some?`${a}/${g.tickets.length}`:'ממתין/ה';
-    const ic = all?'ti-circle-check':some?'ti-circle-half':'ti-circle';
-    const col = all?'#2e7d32':some?'#e65100':'#ccc';
+    const arrived = g.tickets.filter(t=>scanned[t]).length;
+    const all = arrived===g.tickets.length;
+    const some = arrived>0 && !all;
+
+    const rowClass = all ? 'guest-row arrived' : 'guest-row';
+    const nameClass = all ? 'guest-name arrived' : 'guest-name';
+    const ic = all ? 'ti-circle-check' : some ? 'ti-circle-half' : 'ti-circle';
+    const col = all ? '#2e7d32' : some ? '#e65100' : '#ccc';
+
+    const checks = g.tickets.map((t,i) => {
+      const checked = scanned[t] ? 'checked' : '';
+      const title = scanned[t] ? `כרטיס ${i+1} – נסרק ב-${scanned[t]}` : `כרטיס ${i+1} – לחצי לאישור`;
+      return `<div class="ticket-check ${checked}" onclick="toggleTicket('${t}')" title="${title}">${checked ? '✓' : i+1}</div>`;
+    }).join('');
+
     const approveBtn = !all
-      ? `<button class="approve-btn" onclick="approveGuest('${g.name.replace(/'/g, "\'")}')">✓ אשרי</button>`
-      : '';
-    return `<div class="guest-row">
+      ? `<button class="approve-all-btn" onclick="approveAll('${g.name.replace(/'/g,"\\'")}')">✓ הכל</button>`
+      : `<span class="approve-all-btn done">✓ הגיע/ה</span>`;
+
+    const subText = all
+      ? `הגיע/ה · ${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}`
+      : some
+      ? `${arrived} מתוך ${g.tickets.length} נכנסו`
+      : `${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}`;
+
+    return `<div class="${rowClass}">
       <i class="ti ${ic}" style="color:${col};font-size:20px;flex-shrink:0;"></i>
       <div style="flex:1;min-width:0;">
-        <div class="guest-name">${g.name}</div>
-        <div class="guest-sub">${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}</div>
+        <div class="${nameClass}">${g.name}</div>
+        <div class="guest-sub ${all?'arrived':''}">${subText}</div>
+        <div class="ticket-checks">${checks}</div>
       </div>
-      <span class="badge ${bc}">${bt}</span>
       ${approveBtn}
     </div>`;
   }).join('');
+
+  if (filtered.length===0) {
+    document.getElementById('guest-list').innerHTML =
+      `<p style="text-align:center;color:#aaa;padding:20px;font-size:13px;">אין תוצאות</p>`;
+  }
 }
 
-// Start
+function toggleScanner() {
+  if (scannerOpen) {
+    html5Scanner && html5Scanner.stop().catch(()=>{});
+    document.getElementById('reader').style.display='none';
+    document.getElementById('scan-btn').innerHTML='<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
+    scannerOpen=false;
+  } else {
+    document.getElementById('reader').style.display='block';
+    document.getElementById('scan-btn').innerHTML='<i class="ti ti-x"></i> סגרי מצלמה';
+    scannerOpen=true;
+    html5Scanner=new Html5Qrcode("reader");
+    html5Scanner.start(
+      {facingMode:"environment"},
+      {fps:10,qrbox:{width:230,height:230}},
+      decoded=>{
+        checkCode(decoded);
+        html5Scanner.pause();
+        setTimeout(()=>{try{html5Scanner.resume();}catch(e){}},2500);
+      },
+      ()=>{}
+    ).catch(()=>{
+      showResult('err','אין גישה למצלמה','אשרי הרשאת מצלמה בדפדפן.');
+      document.getElementById('reader').style.display='none';
+      document.getElementById('scan-btn').innerHTML='<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
+      scannerOpen=false;
+    });
+  }
+}
+
 startListening();
 renderList();
 </script>
