@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>כניסה – TABLAO REMANGAR</title>
+<title>כניסה – TABLAO REMANGAR 30.7</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,9 +13,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .header-icon { width: 38px; height: 38px; border-radius: 50%; background: #c41e1e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .header h1 { font-size: 16px; font-weight: 600; margin: 0; }
 .header p { font-size: 12px; color: #aaa; margin: 0; }
-.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-left: 6px; }
+.sync-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #aaa; margin-top: 2px; }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
 .sync-dot.ok { background: #4caf50; }
 .sync-dot.err { background: #ef5350; }
+.sync-dot.local { background: #ff9800; }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
 .stat { background: white; border-radius: 10px; padding: 14px; text-align: center; }
 .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
@@ -48,14 +50,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .result-err p { color: #c62828; }
 .result-warn p { color: #e65100; }
 .undo-btn { margin-top: 12px; padding: 8px 18px; background: white; color: #c62828; border: 1.5px solid #c62828; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
-
-.tabs { display: flex; gap: 0; margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; }
+.offline-banner { background: #fff3e0; border: 1px solid #ff9800; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #e65100; margin-bottom: 8px; display: none; }
+.tabs { display: flex; margin-bottom: 12px; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; }
 .tab { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: white; border: none; font-family: inherit; color: #888; }
 .tab.active { background: #1a0a0a; color: white; }
-
 .search-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .search-row input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; width: 140px; font-family: inherit; }
-
 .guest-list { max-height: 380px; overflow-y: auto; }
 .guest-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 0.5px solid #eee; }
 .guest-row:last-child { border-bottom: none; }
@@ -64,33 +64,35 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 .guest-name.arrived { color: #1b5e20; }
 .guest-sub { font-size: 11px; color: #888; }
 .guest-sub.arrived { color: #2e7d32; }
-
 .ticket-checks { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
 .ticket-check { width: 22px; height: 22px; border-radius: 5px; border: 1.5px solid #ddd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #ccc; flex-shrink: 0; }
 .ticket-check.checked { background: #2e7d32; border-color: #2e7d32; color: white; }
-
 .approve-all-btn { background: none; border: 1.5px solid #ddd; border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; color: #888; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
 .approve-all-btn.done { border-color: #4caf50; color: #2e7d32; background: #e8f5e9; }
 </style>
 </head>
 <body>
-
 <div class="header">
-  <div class="header-icon"><i class="ti ti-door-enter" style="color:white; font-size:20px;"></i></div>
+  <div class="header-icon"><i class="ti ti-door-enter" style="color:white;font-size:20px;"></i></div>
   <div style="flex:1;">
     <h1>TABLAO REMANGAR</h1>
-    <p>כניסה | 25.6.2026 · 20:30 <span class="sync-dot" id="sync-dot"></span></p>
+    <div class="sync-status">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-label">30.7.2026 · 20:00</span>
+    </div>
   </div>
 </div>
 
 <div class="stats">
   <div class="stat"><div class="stat-label">הגיעו</div><div class="stat-val green" id="cnt-arrived">0</div></div>
-  <div class="stat"><div class="stat-label">טרם הגיעו</div><div class="stat-val" id="cnt-pending">43</div></div>
+  <div class="stat"><div class="stat-label">טרם הגיעו</div><div class="stat-val" id="cnt-pending">49</div></div>
 </div>
 
 <div class="content">
+  <div id="offline-banner" class="offline-banner">
+    ⚠️ אין חיבור ל-Firebase – הנתונים נשמרים מקומית על הטלפון ולא יימחקו ברענון
+  </div>
   <div id="result-box"></div>
-
   <div class="card">
     <div class="card-title">סריקת כרטיס</div>
     <button class="scan-btn" id="scan-btn" onclick="toggleScanner()">
@@ -99,23 +101,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
     <div id="reader"></div>
     <div class="divider">או הזיני ידנית</div>
     <div class="manual-row">
-      <input type="text" id="manual-code" placeholder="לדוגמה: 0006-01" onkeydown="if(event.key==='Enter') checkManual()" />
+      <input type="text" id="manual-code" placeholder="לדוגמה: 0001-01" onkeydown="if(event.key==='Enter') checkManual()" />
       <button onclick="checkManual()">בדקי</button>
     </div>
   </div>
-
   <div class="card">
     <div class="search-row">
       <div class="card-title" style="margin:0;">רשימת אורחים</div>
       <input type="text" id="search" placeholder="חפשי שם..." oninput="renderList()" />
     </div>
-
     <div class="tabs">
       <button class="tab active" id="tab-all" onclick="setTab('all')">כולם</button>
       <button class="tab" id="tab-arrived" onclick="setTab('arrived')">הגיעו</button>
       <button class="tab" id="tab-pending" onclick="setTab('pending')">ממתינים</button>
     </div>
-
     <div class="guest-list" id="guest-list"></div>
   </div>
 </div>
@@ -123,121 +122,155 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-s
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 const FIREBASE_URL = "https://tablao-remangar-default-rtdb.firebaseio.com";
+const STORAGE_KEY = "tablao_300726_scanned";
 
 const GUESTS = [
-  {name:"Dmitri Milititski", tickets:["0001-01","0001-02"]},
-  {name:"יוליה בנסמן", tickets:["0002-01","0002-02"]},
-  {name:"ביניסטי בריג'יט", tickets:["0003-01","0003-02"]},
-  {name:"ANTEA MORENO", tickets:["0004-01","0004-02"]},
-  {name:"אורית מילר", tickets:["0005-01","0005-02"]},
-  {name:"נוגה מור-חביליו", tickets:["0006-01"]},
-  {name:"דרלי ספיר", tickets:["0007-01","0007-02"]},
-  {name:"טימור פירוג", tickets:["0008-01","0008-02"]},
-  {name:"מירב קורוסטישבסקי", tickets:["0009-01","0009-02"]},
-  {name:"גבי עדי", tickets:["0010-01"]},
-  {name:"גלית לחמן", tickets:["0011-01","0011-02","0011-03","0011-04","0011-05"]},
-  {name:"צפנת לובצקי", tickets:["0012-01","0012-02"]},
-  {name:"רותם שמעוני", tickets:["0013-01"]},
-  {name:"לי שוסטרמן שלו", tickets:["0014-01","0014-02"]},
-  {name:"אנדרי ליטבינסקי", tickets:["0015-01"]},
-  {name:"עמית לובטון", tickets:["0016-01","0016-02","0016-03"]},
-  {name:"מיה סגל", tickets:["0017-01","0017-02","0017-03","0017-04","0017-05","0017-06"]},
-  {name:"שיר ישראלי", tickets:["0018-01","0018-02"]},
-  {name:"אתי הלפרט", tickets:["0019-01"]},
-  {name:"תהילה שוורץ", tickets:["0020-01","0020-02"]},
+  {name:"Ana Morgenstern", tickets:["0001-01","0001-02"]},
+  {name:"יעל איל", tickets:["0002-01","0002-02"]},
+  {name:"ענת פלג", tickets:["0003-01","0003-02"]},
+  {name:"אנה קבו", tickets:["0004-01","0004-02"]},
+  {name:"טלי שרירא", tickets:["0005-01"]},
+  {name:"מיה סולומון", tickets:["0006-01"]},
+  {name:"זיוה מור הופמן", tickets:["0007-01","0007-02"]},
+  {name:"נטליה זק", tickets:["0008-01"]},
+  {name:"גליה בהיר", tickets:["0009-01"]},
+  {name:"ענבר לבנון", tickets:["0010-01"]},
+  {name:"ענת פלג", tickets:["0011-01"]},
+  {name:"אלקסיס רפילוביץ", tickets:["0012-01"]},
+  {name:"נדזדה קוצי", tickets:["0013-01"]},
+  {name:"שרה לוגסי", tickets:["0014-01","0014-02"]},
+  {name:"מאשה שנייברג", tickets:["0015-01","0015-02"]},
+  {name:"ענבל עינב", tickets:["0016-01","0016-02"]},
+  {name:"מריה קרמרוב", tickets:["0017-01","0017-02"]},
+  {name:"אסתי קאן", tickets:["0018-01","0018-02"]},
+  {name:"תומר דיין", tickets:["0019-01","0019-02"]},
+  {name:"אסתר גולדברג", tickets:["0020-01","0020-02"]},
+  {name:"ויטאל לוינסקי", tickets:["0021-01","0021-02"]},
+  {name:"יוסף יפה", tickets:["0022-01","0022-02"]},
+  {name:"אביגיל ביטון", tickets:["0023-01"]},
+  {name:"Yaara Blanga", tickets:["0024-01","0024-02"]},
+  {name:"נעם לוקר", tickets:["0025-01","0025-02","0025-03"]},
+  {name:"מירב קורוסטישבסקי", tickets:["0026-01","0026-02"]},
+  {name:"נוגה מור-חביליו", tickets:["0027-01"]},
+  {name:"תמר קלינברגר", tickets:["0028-01","0028-02"]},
+  {name:"סימה יהודה", tickets:["0029-01"]},
+  {name:"רותם ניני", tickets:["0030-01"]},
 ];
 
 const ticketMap = {};
 GUESTS.forEach(g => g.tickets.forEach(t => ticketMap[t] = g));
 
+// === Dual storage: Firebase + localStorage ===
 const scanned = {};
-let lastScanned = null;
-let scannerOpen = false;
-let html5Scanner = null;
-let currentTab = 'all';
+let lastScanned = null, scannerOpen = false, html5Scanner = null, currentTab = 'all';
+let firebaseOk = false;
 
-function setSyncDot(status) {
+// Load from localStorage on startup
+function loadFromLocal() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const data = JSON.parse(saved);
+      Object.assign(scanned, data);
+      updateStats(); renderList();
+      console.log('Loaded from localStorage:', Object.keys(scanned).length, 'entries');
+    }
+  } catch(e) { console.error('localStorage load error:', e); }
+}
+
+function saveToLocal() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scanned));
+  } catch(e) { console.error('localStorage save error:', e); }
+}
+
+function setSyncStatus(status) {
   const dot = document.getElementById('sync-dot');
-  dot.className = 'sync-dot ' + (status==='ok'?'ok':status==='err'?'err':'');
+  const label = document.getElementById('sync-label');
+  const banner = document.getElementById('offline-banner');
+  if (status === 'ok') {
+    dot.className = 'sync-dot ok'; firebaseOk = true;
+    label.textContent = '30.7.2026 · 20:00 · מסונכרן';
+    banner.style.display = 'none';
+  } else if (status === 'local') {
+    dot.className = 'sync-dot local'; firebaseOk = false;
+    label.textContent = '30.7.2026 · 20:00 · שמירה מקומית';
+    banner.style.display = 'block';
+  } else {
+    dot.className = 'sync-dot err';
+  }
 }
 
 function fromFirebaseKey(k) {
   const m = k.match(/^(\d{4})_(\d{2})$/);
-  return m ? `${m[1]}-${m[2]}` : k.replace('_','-');
+  return m ? `${m[1]}-${m[2]}` : k.replace('_', '-');
 }
 
 function startListening() {
-  const evtSource = new EventSource(`${FIREBASE_URL}/scanned.json`);
-  evtSource.addEventListener('put', e => {
-    const parsed = JSON.parse(e.data);
-    const path = parsed.path;
-    const val = parsed.data;
-    Object.keys(scanned).forEach(k => delete scanned[k]);
-    if (path === '/' && val) {
-      Object.keys(val).forEach(k => { scanned[fromFirebaseKey(k)] = val[k]; });
-    } else if (path !== '/' ) {
-      const key = fromFirebaseKey(path.replace('/',''));
-      if (val !== null) scanned[key] = val;
-    }
-    updateStats(); renderList(); setSyncDot('ok');
-  });
-  evtSource.addEventListener('patch', e => {
-    const parsed = JSON.parse(e.data);
-    const val = parsed.data;
-    if (val) {
-      Object.keys(val).forEach(k => {
+  try {
+    const es = new EventSource(`${FIREBASE_URL}/scanned_tablao300726.json`);
+    es.addEventListener('put', e => {
+      const p = JSON.parse(e.data);
+      Object.keys(scanned).forEach(k => delete scanned[k]);
+      if (p.path === '/' && p.data)
+        Object.keys(p.data).forEach(k => { scanned[fromFirebaseKey(k)] = p.data[k]; });
+      else if (p.path !== '/') {
+        const k = fromFirebaseKey(p.path.replace('/', ''));
+        if (p.data !== null) scanned[k] = p.data;
+      }
+      saveToLocal();
+      updateStats(); renderList(); setSyncStatus('ok');
+    });
+    es.addEventListener('patch', e => {
+      const v = JSON.parse(e.data).data;
+      if (v) Object.keys(v).forEach(k => {
         const key = fromFirebaseKey(k);
-        if (val[k] === null) delete scanned[key];
-        else scanned[key] = val[k];
+        if (v[k] === null) delete scanned[key]; else scanned[key] = v[k];
       });
-    }
-    updateStats(); renderList(); setSyncDot('ok');
-  });
-  evtSource.onerror = () => setSyncDot('err');
+      saveToLocal();
+      updateStats(); renderList(); setSyncStatus('ok');
+    });
+    es.onerror = () => setSyncStatus('local');
+  } catch(e) { setSyncStatus('local'); }
 }
 
-async function saveToFirebase(key, value) {
+async function saveToFirebase(key, val) {
   try {
-    const safeKey = key.replace('-','_');
-    await fetch(`${FIREBASE_URL}/scanned/${safeKey}.json`, {
-      method:'PUT', body: JSON.stringify(value)
-    });
-    setSyncDot('ok');
-  } catch(e) { setSyncDot('err'); }
+    const res = await fetch(`${FIREBASE_URL}/scanned_tablao300726/${key.replace('-','_')}.json`,
+      {method:'PUT', body:JSON.stringify(val)});
+    if (res.ok) setSyncStatus('ok');
+    else setSyncStatus('local');
+  } catch(e) { setSyncStatus('local'); }
 }
 
 async function deleteFromFirebase(key) {
   try {
-    const safeKey = key.replace('-','_');
-    await fetch(`${FIREBASE_URL}/scanned/${safeKey}.json`, {method:'DELETE'});
-    setSyncDot('ok');
-  } catch(e) { setSyncDot('err'); }
+    await fetch(`${FIREBASE_URL}/scanned_tablao300726/${key.replace('-','_')}.json`, {method:'DELETE'});
+    setSyncStatus('ok');
+  } catch(e) { setSyncStatus('local'); }
 }
 
-function totalTickets() { return GUESTS.reduce((s,g)=>s+g.tickets.length,0); }
+function totalTickets() { return GUESTS.reduce((s,g) => s+g.tickets.length, 0); }
 function arrivedCount() { return Object.keys(scanned).length; }
-
 function updateStats() {
   document.getElementById('cnt-arrived').textContent = arrivedCount();
   document.getElementById('cnt-pending').textContent = totalTickets() - arrivedCount();
 }
 
-function setTab(tab) {
-  currentTab = tab;
-  ['all','arrived','pending'].forEach(t => {
-    document.getElementById('tab-'+t).className = 'tab' + (t===tab?' active':'');
+function setTab(t) {
+  currentTab = t;
+  ['all','arrived','pending'].forEach(x => {
+    document.getElementById('tab-'+x).className = 'tab' + (x===t?' active':'');
   });
   renderList();
 }
 
 function showResult(type, title, sub, showUndo=false) {
-  const cls = {ok:'result-ok',err:'result-err',warn:'result-warn'};
-  const ico = {ok:'ti-circle-check',err:'ti-circle-x',warn:'ti-alert-triangle'};
-  const undoBtn = showUndo
-    ? `<button class="undo-btn" onclick="undoLast()"><i class="ti ti-arrow-back-up"></i> בטלי סריקה</button>`
-    : '';
+  const cls={ok:'result-ok',err:'result-err',warn:'result-warn'};
+  const ico={ok:'ti-circle-check',err:'ti-circle-x',warn:'ti-alert-triangle'};
+  const u = showUndo ? `<button class="undo-btn" onclick="undoLast()"><i class="ti ti-arrow-back-up"></i> בטלי סריקה</button>` : '';
   document.getElementById('result-box').innerHTML =
-    `<div class="result ${cls[type]}"><i class="ti ${ico[type]} icon"></i><h2>${title}</h2><p>${sub}</p>${undoBtn}</div>`;
+    `<div class="result ${cls[type]}"><i class="ti ${ico[type]} icon"></i><h2>${title}</h2><p>${sub}</p>${u}</div>`;
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -245,134 +278,74 @@ async function undoLast() {
   if (!lastScanned) return;
   const {key, guest} = lastScanned;
   delete scanned[key];
+  saveToLocal();
   await deleteFromFirebase(key);
   lastScanned = null;
   updateStats(); renderList();
-  showResult('warn','הסריקה בוטלה',`${guest.name} – כרטיס ${key} חזר לממתין`);
+  showResult('warn', 'הסריקה בוטלה', `${guest.name} – כרטיס ${key} חזר לממתין`);
 }
 
 async function checkCode(raw) {
   const match = raw.trim().match(/(\d{4}-\d{2})/);
-  if (!match) { showResult('err','כרטיס לא נמצא','הקוד לא תקין. נסי שוב.'); return; }
-  const ticketId = match[1];
-  const key = Object.keys(ticketMap).find(k=>k===ticketId);
-  if (!key) { showResult('err','כרטיס לא נמצא','המספר לא מופיע ברשימה.'); return; }
+  if (!match) { showResult('err','כרטיס לא נמצא','הקוד לא תקין.'); return; }
+  const key = Object.keys(ticketMap).find(k => k === match[1]);
+  if (!key) { showResult('err','כרטיס לא נמצא','המספר לא ברשימה.'); return; }
   const guest = ticketMap[key];
-  if (scanned[key]) {
-    showResult('warn','כרטיס כבר נסרק!',`${guest.name} – נסרק בשעה ${scanned[key]}`);
-  } else {
-    const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-    scanned[key] = now;
-    lastScanned = {key, guest};
-    await saveToFirebase(key, now);
-    const arrived = guest.tickets.filter(t=>scanned[t]).length;
-    const sub = guest.tickets.length>1
-      ? `${arrived} מתוך ${guest.tickets.length} כרטיסים נסרקו · ${now}`
-      : `כרטיס ${key} · ${now}`;
-    showResult('ok',`ברוכ/ה הבא/ה, ${guest.name}!`,sub,true);
-    updateStats(); renderList();
-  }
+  if (scanned[key]) { showResult('warn','כרטיס כבר נסרק!',`${guest.name} – נסרק ב-${scanned[key]}`); return; }
+  const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  scanned[key] = now; lastScanned = {key, guest};
+  saveToLocal();
+  await saveToFirebase(key, now);
+  const arrived = guest.tickets.filter(t => scanned[t]).length;
+  const sub = guest.tickets.length > 1
+    ? `${arrived} מתוך ${guest.tickets.length} כרטיסים נסרקו · ${now}`
+    : `כרטיס ${key} · ${now}`;
+  showResult('ok', `ברוכ/ה הבא/ה, ${guest.name}!`, sub, true);
+  updateStats(); renderList();
 }
 
 function checkManual() {
-  const val = document.getElementById('manual-code').value;
-  if (!val.trim()) return;
-  checkCode(val);
-  document.getElementById('manual-code').value = '';
+  const v = document.getElementById('manual-code').value;
+  if (!v.trim()) return; checkCode(v); document.getElementById('manual-code').value = '';
 }
 
-async function toggleTicket(ticketId) {
-  const guest = ticketMap[ticketId];
-  if (!guest) return;
+async function toggleTicket(tid) {
+  const guest = ticketMap[tid]; if (!guest) return;
   const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  if (scanned[ticketId]) {
-    delete scanned[ticketId];
-    await deleteFromFirebase(ticketId);
-  } else {
-    scanned[ticketId] = now;
-    lastScanned = {key: ticketId, guest};
-    await saveToFirebase(ticketId, now);
-  }
+  if (scanned[tid]) { delete scanned[tid]; saveToLocal(); await deleteFromFirebase(tid); }
+  else { scanned[tid] = now; lastScanned = {key:tid,guest}; saveToLocal(); await saveToFirebase(tid,now); }
   updateStats(); renderList();
 }
 
 async function approveAll(name) {
-  const guest = GUESTS.find(g=>g.name===name);
-  if (!guest) return;
+  const guest = GUESTS.find(g => g.name===name); if (!guest) return;
   const now = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  const unscanned = guest.tickets.filter(t=>!scanned[t]);
-  if (unscanned.length===0) return;
-  for (const t of unscanned) {
-    scanned[t] = now;
-    await saveToFirebase(t, now);
-  }
+  const unscanned = guest.tickets.filter(t => !scanned[t]); if (!unscanned.length) return;
+  for (const t of unscanned) { scanned[t] = now; await saveToFirebase(t, now); }
+  saveToLocal();
   lastScanned = {key: unscanned[unscanned.length-1], guest};
-  const sub = guest.tickets.length>1
-    ? `כל ${guest.tickets.length} הכרטיסים אושרו · ${now}`
-    : `כרטיס ${guest.tickets[0]} · ${now}`;
-  showResult('ok',`ברוכ/ה הבא/ה, ${guest.name}!`,sub,true);
+  const sub = guest.tickets.length>1 ? `כל ${guest.tickets.length} הכרטיסים אושרו · ${now}` : `כרטיס ${guest.tickets[0]} · ${now}`;
+  showResult('ok', `ברוכ/ה הבא/ה, ${guest.name}!`, sub, true);
   updateStats(); renderList();
 }
 
 function renderList() {
   const q = (document.getElementById('search').value||'').trim();
-  let filtered = q ? GUESTS.filter(g=>g.name.includes(q)) : [...GUESTS];
-
-  if (currentTab==='arrived') {
-    filtered = filtered.filter(g=>g.tickets.some(t=>scanned[t]));
-  } else if (currentTab==='pending') {
-    filtered = filtered.filter(g=>g.tickets.every(t=>!scanned[t]));
-  }
-
-  if (currentTab==='all') {
-    filtered.sort((a,b)=>{
-      const aAll = a.tickets.every(t=>scanned[t]);
-      const bAll = b.tickets.every(t=>scanned[t]);
-      return bAll - aAll;
-    });
-  }
-
-  document.getElementById('guest-list').innerHTML = filtered.map(g=>{
-    const arrived = g.tickets.filter(t=>scanned[t]).length;
-    const all = arrived===g.tickets.length;
-    const some = arrived>0 && !all;
-
-    const rowClass = all ? 'guest-row arrived' : 'guest-row';
-    const nameClass = all ? 'guest-name arrived' : 'guest-name';
-    const ic = all ? 'ti-circle-check' : some ? 'ti-circle-half' : 'ti-circle';
-    const col = all ? '#2e7d32' : some ? '#e65100' : '#ccc';
-
-    const checks = g.tickets.map((t,i) => {
-      const checked = scanned[t] ? 'checked' : '';
-      const title = scanned[t] ? `כרטיס ${i+1} – נסרק ב-${scanned[t]}` : `כרטיס ${i+1} – לחצי לאישור`;
-      return `<div class="ticket-check ${checked}" onclick="toggleTicket('${t}')" title="${title}">${checked ? '✓' : i+1}</div>`;
-    }).join('');
-
-    const approveBtn = !all
+  let f = q ? GUESTS.filter(g => g.name.includes(q)) : [...GUESTS];
+  if (currentTab==='arrived') f = f.filter(g => g.tickets.some(t => scanned[t]));
+  else if (currentTab==='pending') f = f.filter(g => g.tickets.every(t => !scanned[t]));
+  if (currentTab==='all') f.sort((a,b) => b.tickets.every(t=>scanned[t]) - a.tickets.every(t=>scanned[t]));
+  document.getElementById('guest-list').innerHTML = f.map(g => {
+    const a = g.tickets.filter(t=>scanned[t]).length, all = a===g.tickets.length, some = a>0&&!all;
+    const rc = all?'guest-row arrived':'guest-row', nc = all?'guest-name arrived':'guest-name';
+    const ic = all?'ti-circle-check':some?'ti-circle-half':'ti-circle', col = all?'#2e7d32':some?'#e65100':'#ccc';
+    const checks = g.tickets.map((t,i) => `<div class="ticket-check ${scanned[t]?'checked':''}" onclick="toggleTicket('${t}')">${scanned[t]?'✓':i+1}</div>`).join('');
+    const btn = !all
       ? `<button class="approve-all-btn" onclick="approveAll('${g.name.replace(/'/g,"\\'")}')">✓ הכל</button>`
       : `<span class="approve-all-btn done">✓ הגיע/ה</span>`;
-
-    const subText = all
-      ? `הגיע/ה · ${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}`
-      : some
-      ? `${arrived} מתוך ${g.tickets.length} נכנסו`
-      : `${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}`;
-
-    return `<div class="${rowClass}">
-      <i class="ti ${ic}" style="color:${col};font-size:20px;flex-shrink:0;"></i>
-      <div style="flex:1;min-width:0;">
-        <div class="${nameClass}">${g.name}</div>
-        <div class="guest-sub ${all?'arrived':''}">${subText}</div>
-        <div class="ticket-checks">${checks}</div>
-      </div>
-      ${approveBtn}
-    </div>`;
-  }).join('');
-
-  if (filtered.length===0) {
-    document.getElementById('guest-list').innerHTML =
-      `<p style="text-align:center;color:#aaa;padding:20px;font-size:13px;">אין תוצאות</p>`;
-  }
+    const sub = all ? `הגיע/ה · ${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}` : some ? `${a} מתוך ${g.tickets.length} נכנסו` : `${g.tickets.length} כרטיס${g.tickets.length>1?'ים':''}`;
+    return `<div class="${rc}"><i class="ti ${ic}" style="color:${col};font-size:20px;flex-shrink:0;"></i><div style="flex:1;min-width:0;"><div class="${nc}">${g.name}</div><div class="guest-sub ${all?'arrived':''}">${sub}</div><div class="ticket-checks">${checks}</div></div>${btn}</div>`;
+  }).join('') || `<p style="text-align:center;color:#aaa;padding:20px;font-size:13px;">אין תוצאות</p>`;
 }
 
 function toggleScanner() {
@@ -385,17 +358,11 @@ function toggleScanner() {
     document.getElementById('reader').style.display='block';
     document.getElementById('scan-btn').innerHTML='<i class="ti ti-x"></i> סגרי מצלמה';
     scannerOpen=true;
-    html5Scanner=new Html5Qrcode("reader");
-    html5Scanner.start(
-      {facingMode:"environment"},
-      {fps:10,qrbox:{width:230,height:230}},
-      decoded=>{
-        checkCode(decoded);
-        html5Scanner.pause();
-        setTimeout(()=>{try{html5Scanner.resume();}catch(e){}},2500);
-      },
-      ()=>{}
-    ).catch(()=>{
+    html5Scanner = new Html5Qrcode("reader");
+    html5Scanner.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:250}},
+      decoded => { checkCode(decoded); html5Scanner.pause(); setTimeout(()=>{try{html5Scanner.resume();}catch(e){}},2500); },
+      ()=>{})
+    .catch(()=>{
       showResult('err','אין גישה למצלמה','אשרי הרשאת מצלמה בדפדפן.');
       document.getElementById('reader').style.display='none';
       document.getElementById('scan-btn').innerHTML='<i class="ti ti-qrcode"></i> פתחי מצלמה לסריקה';
@@ -404,6 +371,8 @@ function toggleScanner() {
   }
 }
 
+// Init: load local first, then connect to Firebase
+loadFromLocal();
 startListening();
 renderList();
 </script>
