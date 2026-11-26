@@ -6,75 +6,115 @@
 <title>TABLAO REMANGAR – כניסה 26.11.26</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#1a1a1a;color:#fff;min-height:100vh}
-header{background:#000;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #c41e1e}
-.title{font-size:16px;font-weight:bold;color:#fff}.subtitle{font-size:11px;color:#aaa}
-.stats{display:flex;gap:0}
-.stat{background:#222;padding:12px 20px;text-align:center;flex:1;border-left:1px solid #333}
-.stat:last-child{border-left:none}
-.stat-num{font-size:28px;font-weight:bold}.arrived .stat-num{color:#22c55e}.pending .stat-num{color:#fff}
-.stat-label{font-size:11px;color:#aaa;margin-top:2px}
+body{background:#111;color:#fff;min-height:100vh;padding-bottom:40px}
+header{background:#000;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #c41e1e;position:sticky;top:0;z-index:50}
+.hdr-left .title{font-size:17px;font-weight:bold}.hdr-left .sub{font-size:11px;color:#aaa;margin-top:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#333;margin-bottom:2px}
+.stat{background:#1a1a1a;padding:14px;text-align:center}
+.stat-num{font-size:32px;font-weight:bold;line-height:1}
+.stat-num.green{color:#22c55e}.stat-num.white{color:#fff}
+.stat-label{font-size:11px;color:#888;margin-top:4px}
 #offline-banner{display:none;background:#7c3a00;color:#ffd;padding:8px 16px;font-size:12px;text-align:center}
-.scanner-box{margin:16px;background:#111;border-radius:8px;padding:16px;border:1px solid #333}
-.scanner-box h3{font-size:13px;color:#aaa;margin-bottom:10px;text-align:center}
-#scan-btn{width:100%;background:#c41e1e;color:#fff;border:none;border-radius:8px;padding:14px;font-size:16px;font-weight:bold;cursor:pointer}
-#scan-btn:active{background:#a01515}
-.manual{margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center;font-size:12px;color:#888}
-.manual input{background:#222;border:1px solid #444;color:#fff;border-radius:6px;padding:8px 10px;font-size:13px;width:160px;text-align:center;direction:ltr}
-.manual button{background:#333;color:#fff;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-size:13px}
-#result-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;align-items:center;justify-content:center}
-#result-modal.show{display:flex}
-.result-card{background:#1a1a1a;border-radius:12px;padding:24px;width:90%;max-width:380px;text-align:center;border:2px solid #333}
-.result-card.ok{border-color:#22c55e}.result-card.err{border-color:#c41e1e}.result-card.warn{border-color:#f59e0b}
-.result-icon{font-size:48px;margin-bottom:12px}
-.result-name{font-size:20px;font-weight:bold;margin-bottom:4px}
-.result-info{font-size:13px;color:#aaa;margin-bottom:16px}
-.result-btn{background:#333;color:#fff;border:none;border-radius:8px;padding:12px 32px;font-size:15px;cursor:pointer;width:100%}
-.guests-box{margin:16px;background:#111;border-radius:8px;padding:16px;border:1px solid #333}
-.guests-box h3{font-size:13px;color:#aaa;margin-bottom:10px}
-.search-input{width:100%;background:#222;border:1px solid #444;color:#fff;border-radius:6px;padding:8px 10px;font-size:13px;margin-bottom:10px}
-.guest-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #222}
-.guest-row:last-child{border-bottom:none}
-.guest-info .g-name{font-size:14px;font-weight:bold}
-.guest-info .g-sub{font-size:11px;color:#888;margin-top:2px}
-.g-status{display:flex;gap:4px;align-items:center}
-.btn-mark{background:#1f2937;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer}
-.btn-mark.arrived{background:#166534;color:#fff}
-#reader{width:100%;max-width:400px;margin:0 auto}
+/* tabs */
+.tabs{display:flex;background:#000;border-bottom:1px solid #333}
+.tab{flex:1;padding:12px;text-align:center;font-size:13px;color:#888;cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{color:#fff;border-bottom-color:#c41e1e}
+.panel{display:none;padding:16px}.panel.active{display:block}
+/* scanner */
+#scan-btn{width:100%;background:#c41e1e;color:#fff;border:none;border-radius:8px;padding:14px;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:12px}
+#reader{width:100%;max-width:400px;margin:0 auto 12px}
 video{border-radius:8px;width:100%}
+.manual-row{display:flex;gap:8px;align-items:center}
+.manual-row input{flex:1;background:#222;border:1px solid #444;color:#fff;border-radius:6px;padding:10px;font-size:14px;direction:ltr;text-align:center}
+.manual-row button{background:#333;color:#fff;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-size:14px;white-space:nowrap}
+/* guest list */
+.search-wrap{margin-bottom:12px}
+.search-wrap input{width:100%;background:#222;border:1px solid #444;color:#fff;border-radius:6px;padding:10px;font-size:14px}
+.filter-row{display:flex;gap:8px;margin-bottom:12px}
+.filter-btn{flex:1;background:#222;color:#aaa;border:1px solid #333;border-radius:6px;padding:7px;font-size:12px;cursor:pointer;text-align:center}
+.filter-btn.active{background:#c41e1e;color:#fff;border-color:#c41e1e}
+.guest-card{background:#1a1a1a;border-radius:8px;margin-bottom:8px;overflow:hidden;border:1px solid #2a2a2a}
+.guest-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer}
+.g-name{font-size:15px;font-weight:bold}
+.g-badge{font-size:12px;padding:3px 10px;border-radius:12px;background:#333;color:#aaa}
+.g-badge.all{background:#166534;color:#86efac}
+.g-badge.part{background:#713f12;color:#fcd34d}
+.guest-body{border-top:1px solid #222;padding:12px 14px;display:none}
+.guest-body.open{display:block}
+.ticket-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1f1f1f}
+.ticket-row:last-child{border-bottom:none}
+.ticket-id{font-size:13px;color:#aaa;direction:ltr}
+.ticket-status{display:flex;gap:6px;align-items:center}
+.ts-label{font-size:11px;color:#888}
+.btn-scan{background:#166534;color:#86efac;border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer}
+.btn-unscan{background:#3f1515;color:#fca5a5;border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer}
+/* modal */
+#result-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:center;justify-content:center}
+#result-modal.show{display:flex}
+.result-card{background:#1a1a1a;border-radius:14px;padding:28px 24px;width:92%;max-width:380px;text-align:center;border:2px solid #333}
+.result-card.ok{border-color:#22c55e}.result-card.err{border-color:#c41e1e}.result-card.warn{border-color:#f59e0b}
+.res-icon{font-size:52px;margin-bottom:12px}
+.res-name{font-size:21px;font-weight:bold;margin-bottom:6px}
+.res-info{font-size:13px;color:#aaa;margin-bottom:18px;line-height:1.5}
+.res-btn{background:#333;color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;cursor:pointer;width:100%}
+/* arrived tab */
+.arrived-list .arrived-item{background:#0f2017;border:1px solid #166534;border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.ai-name{font-size:14px;font-weight:bold;color:#86efac}
+.ai-time{font-size:11px;color:#4ade80}
+.ai-id{font-size:11px;color:#555;margin-top:2px;direction:ltr}
+.btn-unscan-sm{background:#3f1515;color:#fca5a5;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer}
 </style>
 </head>
 <body>
 <header>
-  <div><div class="title">TABLAO REMANGAR</div><div class="subtitle">26.11.2026 | 20:30 · כניסה</div></div>
-  <button onclick="logout()" style="background:#333;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer">יציאה</button>
+  <div class="hdr-left"><div class="title">TABLAO REMANGAR</div><div class="sub">26.11.2026 | 20:30</div></div>
 </header>
-<div id="offline-banner">⚠ אין חיבור ל-Firebase – הנתונים נשמרים מקומית על הטלפון ולא יסתנכרנו ברענון</div>
+<div id="offline-banner">⚠ אין חיבור ל-Firebase – שמירה מקומית בלבד</div>
 <div class="stats">
-  <div class="stat arrived"><div class="stat-num" id="cnt-arrived">0</div><div class="stat-label">הגיעו</div></div>
-  <div class="stat pending"><div class="stat-num" id="cnt-pending">57</div><div class="stat-label">טרם הגיעו</div></div>
+  <div class="stat"><div class="stat-num green" id="cnt-arrived">0</div><div class="stat-label">הגיעו</div></div>
+  <div class="stat"><div class="stat-num white" id="cnt-pending">57</div><div class="stat-label">טרם הגיעו</div></div>
 </div>
-<div class="scanner-box">
-  <h3>סריקת כרטיס</h3>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('scan',this)">📷 סריקה</div>
+  <div class="tab" onclick="switchTab('guests',this)">👥 אורחים</div>
+  <div class="tab" onclick="switchTab('arrived',this)">✅ הגיעו</div>
+</div>
+
+<!-- SCAN TAB -->
+<div class="panel active" id="tab-scan">
   <button id="scan-btn" onclick="startScan()">📷 פתחי מצלמה לסריקה</button>
   <div id="reader"></div>
-  <div class="manual">או הזיני ידנית:
-    <input id="manual-input" placeholder="לדוגמה: 0035-01" oninput="this.value=this.value.toUpperCase()">
+  <div class="manual-row">
+    <input id="manual-input" placeholder="הזיני מספר כרטיס: 0001-01" oninput="this.value=this.value.toUpperCase()">
     <button onclick="checkManual()">בדקי</button>
   </div>
 </div>
+
+<!-- GUESTS TAB -->
+<div class="panel" id="tab-guests">
+  <div class="search-wrap"><input id="search-input" placeholder="חפשי שם..." oninput="renderGuests(this.value)"></div>
+  <div class="filter-row">
+    <div class="filter-btn active" id="f-all" onclick="setFilter('all')">הכל</div>
+    <div class="filter-btn" id="f-pending" onclick="setFilter('pending')">טרם הגיעו</div>
+    <div class="filter-btn" id="f-arrived" onclick="setFilter('arrived')">הגיעו</div>
+  </div>
+  <div id="guest-list"></div>
+</div>
+
+<!-- ARRIVED TAB -->
+<div class="panel" id="tab-arrived">
+  <div id="arrived-list" class="arrived-list"></div>
+</div>
+
+<!-- MODAL -->
 <div id="result-modal">
   <div class="result-card" id="result-card">
-    <div class="result-icon" id="res-icon"></div>
-    <div class="result-name" id="res-name"></div>
-    <div class="result-info" id="res-info"></div>
-    <button class="result-btn" onclick="closeResult()">סגור</button>
+    <div class="res-icon" id="res-icon"></div>
+    <div class="res-name" id="res-name"></div>
+    <div class="res-info" id="res-info"></div>
+    <button class="res-btn" onclick="closeResult()">סגור</button>
   </div>
-</div>
-<div class="guests-box">
-  <h3>רשימת אורחים</h3>
-  <input class="search-input" placeholder="חפשי שם..." oninput="filterGuests(this.value)" id="search-input">
-  <div id="guest-list"></div>
 </div>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -82,83 +122,89 @@ video{border-radius:8px;width:100%}
 const FIREBASE_URL = "https://tablao-remangar-default-rtdb.firebaseio.com";
 const FIREBASE_PATH = "scanned_tablao261126";
 const STORAGE_KEY = "tablao_261126_scanned";
+const TOTAL = 57;
 const GUESTS = [{"name": "ליהי קרן", "email": "anatba321@gmail.com", "tickets": ["0001-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0001.pdf"}, {"name": "דניאלה ניסים", "email": "13dandy.dn@gmail.com", "tickets": ["0002-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0002.pdf"}, {"name": "Areen Naseraldeen", "email": "areenaseraldeen@gmail.com", "tickets": ["0003-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0003.pdf"}, {"name": "אורן ניסן כהן", "email": "oren2n2@gmail.com", "tickets": ["0004-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0004.pdf"}, {"name": "אריאל אפרוני", "email": "Arielefroni1@gmail.com", "tickets": ["0005-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0005.pdf"}, {"name": "גוני שני עצמון", "email": "gonishani@gmail.com", "tickets": ["0006-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0006.pdf"}, {"name": "שחר אוריאן", "email": "chino7711@yahoo.com", "tickets": ["0007-01", "0007-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0007.pdf"}, {"name": "ליאל סלע", "email": "lielsella@gmail.com", "tickets": ["0008-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0008.pdf"}, {"name": "Brigitte BINISTI", "email": "b.briflam@gmail.com", "tickets": ["0009-01", "0009-02", "0009-03", "0009-04"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0009.pdf"}, {"name": "קטיה גינדה", "email": "katjaginda@gmail.com", "tickets": ["0010-01", "0010-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0010.pdf"}, {"name": "עדן הראל פיירמן", "email": "edenf1234@gmail.com", "tickets": ["0011-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0011.pdf"}, {"name": "ציפי רגב", "email": "tzipyregev@gmail.com", "tickets": ["0012-01", "0012-02", "0012-03"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0012.pdf"}, {"name": "רות חביליו", "email": "ruthtile20@gmail.com", "tickets": ["0013-01", "0013-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0013.pdf"}, {"name": "הילה קרן", "email": "hila9897@gmail.com", "tickets": ["0014-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0014.pdf"}, {"name": "ענת בהרב קרן", "email": "anatba321@gmail.com", "tickets": ["0015-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0015.pdf"}, {"name": "איתי קרן", "email": "tayram777@gmail.com", "tickets": ["0016-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0016.pdf"}, {"name": "Gali Gavze", "email": "Galigavze@gmail.com", "tickets": ["0017-01", "0017-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0017.pdf"}, {"name": "ענת בהרב קרן", "email": "anatba321@gmail.com", "tickets": ["0018-01", "0018-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0018.pdf"}, {"name": "ג׳קי אשל", "email": "Jack.eshsel@gmail.com", "tickets": ["0019-01", "0019-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0019.pdf"}, {"name": "עפר פזי", "email": "lists@pazy.org", "tickets": ["0020-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0020.pdf"}, {"name": "אחווה שמואל", "email": "achvay@gmail.com", "tickets": ["0021-01", "0021-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0021.pdf"}, {"name": "לי חודורוב", "email": "leesinay@gmail.com", "tickets": ["0022-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0022.pdf"}, {"name": "מור רייך-דבורי", "email": "mordvori@gmail.com", "tickets": ["0023-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0023.pdf"}, {"name": "ספיר רביבו", "email": "sapirevivo2289@gmail.com", "tickets": ["0024-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0024.pdf"}, {"name": "דנה גזית", "email": "Gazit-d@inter.net.il", "tickets": ["0025-01", "0025-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0025.pdf"}, {"name": "ליביה בלן משה", "email": "liviabmoshe@gmail.com", "tickets": ["0026-01", "0026-02", "0026-03", "0026-04"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0026.pdf"}, {"name": "אדי בלן", "email": "balan.adi2@gmail.com", "tickets": ["0027-01", "0027-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0027.pdf"}, {"name": "סיון סלוקי", "email": "sivansluki@gmail.com", "tickets": ["0028-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0028.pdf"}, {"name": "טל רונג", "email": "Talrong1@yahoo.com", "tickets": ["0029-01", "0029-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0029.pdf"}, {"name": "אופיר חנינה", "email": "haninaofir@gmail.com", "tickets": ["0030-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0030.pdf"}, {"name": "אמיר הירשברג", "email": "amir.hirshberg@gmail.com", "tickets": ["0031-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0031.pdf"}, {"name": "רונן חסון", "email": "ronenh@gmail.com", "tickets": ["0032-01", "0032-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0032.pdf"}, {"name": "איריס יפה גודר", "email": "irisyaffe@gmail.com", "tickets": ["0033-01", "0033-02"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0033.pdf"}, {"name": "לאה מזרחי", "email": "leah3164@gmail.com", "tickets": ["0034-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0034.pdf"}, {"name": "רעות עדני", "email": "", "tickets": ["0035-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0035.pdf"}, {"name": "Miguel Angel", "email": "", "tickets": ["0036-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0036.pdf"}, {"name": "Shani Livne", "email": "", "tickets": ["0037-01"], "file": "/home/claude/tickets_tablao261126/TABLAO_Ticket_0037.pdf"}];
 
 const ticketMap = {};
 GUESTS.forEach(g => g.tickets.forEach(t => ticketMap[t] = g));
 
 let scanned = {};
-let firebaseOK = true;
-let scanner = null;
-let scanning = false;
+let scanner = null, scanning = false;
+let guestFilter = 'all';
 
 function loadLocal() {
-  try { scanned = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { scanned = {}; }
+  try { scanned = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); } catch(e) { scanned={}; }
 }
 function saveLocal() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(scanned)); } catch(e) {}
 }
-
 async function fbLoad() {
   try {
     const r = await fetch(`${FIREBASE_URL}/${FIREBASE_PATH}.json`);
-    if (!r.ok) throw new Error();
+    if(!r.ok) throw 0;
     const d = await r.json();
-    if (d) Object.assign(scanned, d);
-    firebaseOK = true;
+    if(d) Object.assign(scanned, d);
     document.getElementById('offline-banner').style.display='none';
   } catch(e) {
-    firebaseOK = false;
     document.getElementById('offline-banner').style.display='block';
   }
 }
-async function fbSave(ticketId, data) {
-  try {
-    await fetch(`${FIREBASE_URL}/${FIREBASE_PATH}/${ticketId}.json`, {method:'PUT', body:JSON.stringify(data)});
-  } catch(e) { firebaseOK=false; document.getElementById('offline-banner').style.display='block'; }
+async function fbSet(id, data) {
+  try { await fetch(`${FIREBASE_URL}/${FIREBASE_PATH}/${id}.json`,{method:'PUT',body:JSON.stringify(data)}); } catch(e) {}
+}
+async function fbDel(id) {
+  try { await fetch(`${FIREBASE_URL}/${FIREBASE_PATH}/${id}.json`,{method:'DELETE'}); } catch(e) {}
 }
 
 function markTicket(ticketId) {
   const guest = ticketMap[ticketId];
-  if (!guest) return showResult('err','❌','כרטיס לא מוכר',`מספר: ${ticketId}`);
-  if (scanned[ticketId]) return showResult('warn','⚠️',guest.name,`כבר נסרק קודם!<br>מספר: ${ticketId}`);
+  if(!guest) return showResult('err','❌','כרטיס לא מוכר',`מספר: ${ticketId}`);
+  if(scanned[ticketId]) return showResult('warn','⚠️',guest.name,`כבר נסרק קודם!<br>מספר: ${ticketId}<br><small>${new Date(scanned[ticketId].time).toLocaleTimeString('he-IL')}</small>`);
   const data = {name:guest.name, time:new Date().toISOString()};
-  scanned[ticketId] = data;
-  saveLocal();
-  fbSave(ticketId, data);
-  updateStats();
-  renderGuests();
-  const arrivedCount = guest.tickets.filter(t=>scanned[t]).length;
-  showResult('ok','✅',guest.name,`${ticketId} נסרק בהצלחה<br>${arrivedCount}/${guest.tickets.length} כרטיסים הגיעו`);
+  scanned[ticketId] = data; saveLocal(); fbSet(ticketId, data);
+  updateStats(); renderGuests(); renderArrived();
+  const a = guest.tickets.filter(t=>scanned[t]).length;
+  showResult('ok','✅',guest.name,`${ticketId}<br>${a}/${guest.tickets.length} כרטיסים הגיעו`);
+}
+
+function unscanTicket(ticketId) {
+  if(!scanned[ticketId]) return;
+  delete scanned[ticketId]; saveLocal(); fbDel(ticketId);
+  updateStats(); renderGuests(); renderArrived();
+  showResult('ok','↩️','בוטל',`הכרטיס ${ticketId} בוטל`);
 }
 
 function updateStats() {
   const a = Object.keys(scanned).length;
   document.getElementById('cnt-arrived').textContent = a;
-  document.getElementById('cnt-pending').textContent = 57 - a;
+  document.getElementById('cnt-pending').textContent = TOTAL - a;
 }
 
 function showResult(type, icon, name, info) {
-  const card = document.getElementById('result-card');
-  card.className = 'result-card ' + type;
+  document.getElementById('result-card').className = 'result-card ' + type;
   document.getElementById('res-icon').textContent = icon;
   document.getElementById('res-name').textContent = name;
   document.getElementById('res-info').innerHTML = info;
   document.getElementById('result-modal').classList.add('show');
-  if(type==='ok') setTimeout(closeResult, 2500);
+  if(type==='ok') setTimeout(closeResult, 2200);
 }
 function closeResult() {
   document.getElementById('result-modal').classList.remove('show');
-  if(scanning) { scanning=false; if(scanner){scanner.stop().catch(()=>{});scanner=null;} document.getElementById('reader').innerHTML=''; document.getElementById('scan-btn').textContent='📷 פתחי מצלמה לסריקה'; }
 }
 
 function startScan() {
-  if(scanning) { scanning=false; if(scanner){scanner.stop().catch(()=>{});scanner=null;} document.getElementById('reader').innerHTML=''; document.getElementById('scan-btn').textContent='📷 פתחי מצלמה לסריקה'; return; }
+  if(scanning) {
+    scanning=false;
+    if(scanner) { scanner.stop().catch(()=>{}); scanner=null; }
+    document.getElementById('reader').innerHTML='';
+    document.getElementById('scan-btn').textContent='📷 פתחי מצלמה לסריקה';
+    return;
+  }
   scanning=true;
   document.getElementById('scan-btn').textContent='⏹ עצרי סריקה';
   scanner = new Html5Qrcode("reader");
   scanner.start({facingMode:"environment"},{fps:10,qrbox:220},
-    qrText => { const parts=qrText.split('|'); markTicket(parts.length>=2?parts[1]:qrText); },
+    qr => { const p=qr.split('|'); markTicket(p.length>=2?p[1]:qr); },
     ()=>{}
   ).catch(()=>{ document.getElementById('scan-btn').textContent='📷 פתחי מצלמה לסריקה'; scanning=false; });
 }
@@ -167,28 +213,79 @@ function checkManual() {
   const v = document.getElementById('manual-input').value.trim();
   if(v) { markTicket(v); document.getElementById('manual-input').value=''; }
 }
-document.getElementById('manual-input').addEventListener('keydown', e=>{ if(e.key==='Enter') checkManual(); });
+document.getElementById('manual-input').addEventListener('keydown',e=>{ if(e.key==='Enter') checkManual(); });
 
-function filterGuests(q) { renderGuests(q); }
+function setFilter(f) {
+  guestFilter=f;
+  ['all','pending','arrived'].forEach(x=>document.getElementById('f-'+x).classList.toggle('active',x===f));
+  renderGuests(document.getElementById('search-input').value);
+}
+
+function toggleBody(id) {
+  const el=document.getElementById('gb-'+id);
+  el.classList.toggle('open');
+}
+
 function renderGuests(q='') {
   const list = document.getElementById('guest-list');
-  const filtered = GUESTS.filter(g=>!q||g.name.includes(q));
-  list.innerHTML = filtered.map(g => {
-    const arrived = g.tickets.filter(t=>scanned[t]).length;
-    const allArrived = arrived===g.tickets.length;
-    return `<div class="guest-row">
-      <div class="guest-info">
-        <div class="g-name" style="color:${allArrived?'#22c55e':'#fff'}">${g.name}</div>
-        <div class="g-sub">${arrived}/${g.tickets.length} כרטיסים · ${g.tickets.join(', ')}</div>
+  let filtered = GUESTS.filter(g => !q || g.name.includes(q) || g.name.toLowerCase().includes(q.toLowerCase()));
+  if(guestFilter==='pending') filtered = filtered.filter(g=>g.tickets.some(t=>!scanned[t]));
+  if(guestFilter==='arrived') filtered = filtered.filter(g=>g.tickets.some(t=>scanned[t]));
+  list.innerHTML = filtered.map((g,i) => {
+    const a = g.tickets.filter(t=>scanned[t]).length;
+    const all = a===g.tickets.length && g.tickets.length>0;
+    const badge = all ? `<span class="g-badge all">${a}/${g.tickets.length} ✓</span>`
+                      : a>0 ? `<span class="g-badge part">${a}/${g.tickets.length}</span>`
+                             : `<span class="g-badge">${g.tickets.length} כרטיסים</span>`;
+    const rows = g.tickets.map(t => {
+      const done = !!scanned[t];
+      const time = done ? new Date(scanned[t].time).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="ticket-row">
+        <div>
+          <div class="ticket-id">${t}</div>
+          ${done?`<div style="font-size:11px;color:#4ade80">הגיע/ה ${time}</div>`:'<div style="font-size:11px;color:#666">טרם הגיע/ה</div>'}
+        </div>
+        <div class="ticket-status">
+          ${done
+            ? `<button class="btn-unscan" onclick="unscanTicket('${t}');event.stopPropagation()">בטל סריקה</button>`
+            : `<button class="btn-scan" onclick="markTicket('${t}');event.stopPropagation()">סמן הגיע/ה</button>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="guest-card">
+      <div class="guest-head" onclick="toggleBody(${i})">
+        <div class="g-name" style="color:${all?'#86efac':'#fff'}">${g.name}</div>
+        ${badge}
       </div>
-      <div class="g-status">
-        ${g.tickets.map(t=>`<button class="btn-mark ${scanned[t]?'arrived':''}" onclick="markTicket('${t}')">${t}</button>`).join('')}
-      </div>
+      <div class="guest-body" id="gb-${i}">${rows}</div>
     </div>`;
   }).join('');
 }
 
-function logout() { if(confirm('לצאת ממסך הכניסה?')) location.reload(); }
+function renderArrived() {
+  const list = document.getElementById('arrived-list');
+  const entries = Object.entries(scanned).sort((a,b)=>new Date(b[1].time)-new Date(a[1].time));
+  if(!entries.length) { list.innerHTML='<div style="text-align:center;color:#555;padding:40px">טרם הגיעו אורחים</div>'; return; }
+  list.innerHTML = entries.map(([id,data]) => `
+    <div class="arrived-item">
+      <div>
+        <div class="ai-name">${data.name}</div>
+        <div class="ai-id">${id}</div>
+        <div class="ai-time">${new Date(data.time).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <button class="btn-unscan-sm" onclick="unscanTicket('${id}')">בטל</button>
+    </div>`).join('');
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='arrived') renderArrived();
+  if(name==='guests') renderGuests(document.getElementById('search-input').value);
+}
 
 async function init() {
   loadLocal();
